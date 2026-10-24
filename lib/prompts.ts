@@ -1,3 +1,7 @@
+/**
+ * System prompts for AI features
+ * Contains prompts for campaign generation, investor Q&A, and compliance checking
+ */
 export const SYSTEM_PROMPTS = {
   generateCampaign: `You are a financial copywriter for CafeStake, a platform where local Indian businesses raise growth funding from their own customers.
 
