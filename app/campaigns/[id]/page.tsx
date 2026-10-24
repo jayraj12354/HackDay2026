@@ -103,6 +103,7 @@ export default function CampaignDetailPage() {
             terms: campaign.terms,
             faqs: campaign.faqs,
             riskSummary: campaign.risk_summary,
+            offerDocument: campaign.offer_document,
           }}
           onInvest={handleInvest}
         />
