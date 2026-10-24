@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase-server'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { formatINRFull } from '@/lib/utils'
 
 export const instant = false
 
 export default async function HomePage() {
-  const supabase = await createClient()
+  const supabase = await createSupabaseServerClient()
   const { data: campaigns } = await supabase
     .from('campaigns')
     .select('*')
