@@ -11,11 +11,20 @@ export function Header() {
   const pathname = usePathname()
 
   const nav = [
+    { href: '/', label: 'Home' },
     { href: '/campaigns', label: 'Campaigns' },
     ...(user?.role === 'owner'
       ? [{ href: '/dashboard', label: 'Dashboard' }]
-      : [{ href: '/portfolio', label: 'My Portfolio' }]),
+      : user?.role === 'investor'
+      ? [{ href: '/portfolio', label: 'My Portfolio' }]
+      : []),
   ]
+
+  const handleSignOut = async () => {
+    const { supabase } = await import('@/lib/supabase')
+    await supabase.auth.signOut()
+    window.location.href = '/'
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -47,9 +56,14 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           {user ? (
-            <span className="hidden text-sm text-slate-600 sm:inline">
-              {user.email}
-            </span>
+            <>
+              <span className="hidden text-sm text-slate-600 sm:inline">
+                {user.email}
+              </span>
+              <Button size="sm" variant="outline" onClick={handleSignOut}>
+                Sign out
+              </Button>
+            </>
           ) : (
             <DemoLogin />
           )}
