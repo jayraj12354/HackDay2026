@@ -8,7 +8,7 @@ import { InvestModal } from '@/components/InvestModal'
 import { InvestSuccess } from '@/components/InvestSuccess'
 import { Skeleton } from '@/components/ui/skeleton'
 
-export default function CampaignDetailPage() {
+function CampaignDetailContent() {
   const params = useParams()
   const router = useRouter()
   const [campaign, setCampaign] = useState<any>(null)
