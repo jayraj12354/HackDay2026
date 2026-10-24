@@ -1,147 +1,163 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { formatINR } from '@/lib/utils'
+import { useAuth } from '@/hooks/useAuth'
+import { supabase } from '@/lib/supabase'
+import { formatINRFull } from '@/lib/utils'
+import Link from 'next/link'
 
 export default function PortfolioPage() {
-  const router = useRouter()
+  const { user, loading } = useAuth()
   const [investments, setInvestments] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loadingInvestments, setLoadingInvestments] = useState(true)
 
   useEffect(() => {
-    const fetchInvestments = async () => {
-      const supabase = createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+    if (!user) return
 
-      if (!user) {
-        router.push('/login')
-        return
-      }
-
-      const { data, error } = await supabase
+    const loadInvestments = async () => {
+      const { data } = await supabase
         .from('investments')
-        .select(`
-          *,
-          campaigns (
-            id,
-            title,
-            category,
-            city,
-            goal,
-            raised
-          )
-        `)
+        .select('*, campaigns(*)')
         .eq('investor_id', user.id)
-
-      if (error) {
-        console.error('Error fetching investments:', error)
-      } else {
-        setInvestments(data || [])
-      }
-      setLoading(false)
+        .order('created_at', { ascending: false })
+      setInvestments(data || [])
+      setLoadingInvestments(false)
     }
 
-    fetchInvestments()
-  }, [router])
+    loadInvestments()
+  }, [user])
 
-  if (loading) {
+  if (loading || loadingInvestments) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <div className="space-y-4">
-            <div className="h-8 w-64 animate-pulse bg-muted rounded" />
-            <div className="h-64 w-full animate-pulse bg-muted rounded" />
-          </div>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!user || user.role !== 'investor') {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <p className="text-slate-500">This page is for investors only</p>
+          <Link href="/">
+            <Button className="mt-4">Go home</Button>
+          </Link>
         </div>
       </div>
     )
   }
 
+  const totalInvested = investments.reduce(
+    (sum, inv) => sum + Number(inv.amount),
+    0
+  )
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">My portfolio</h1>
-          <p className="text-muted-foreground">
-            Your investments in local businesses
+    <div className="min-h-screen bg-slate-50">
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-slate-900">My Portfolio</h1>
+              <p className="text-sm text-slate-500">
+                Your investments in local businesses
+              </p>
+            </div>
+            <Link href="/campaigns">
+              <Button>Browse Campaigns</Button>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6">
+          <p className="text-sm font-medium text-slate-500">Total Invested</p>
+          <p className="mt-2 text-3xl font-bold text-slate-900">
+            {formatINRFull(totalInvested)}
           </p>
         </div>
 
-        {investments.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground mb-4">
-                You haven't made any investments yet.
+        <h2 className="text-lg font-semibold text-slate-900">Your Investments</h2>
+        <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {investments.length === 0 ? (
+            <div className="col-span-full rounded-lg border border-dashed border-slate-300 p-12 text-center">
+              <p className="text-slate-500">No investments yet</p>
+              <p className="mt-1 text-sm text-slate-400">
+                Start investing in local businesses to see them here
               </p>
-              <button
-                onClick={() => router.push('/campaigns')}
-                className="text-primary hover:underline"
-              >
-                Browse campaigns
-              </button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {investments.map((investment) => (
-              <Card key={investment.id}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-xl">
-                        {investment.campaigns?.title || 'Unknown campaign'}
-                      </CardTitle>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="secondary">
-                          {investment.campaigns?.category}
-                        </Badge>
-                        <span className="text-sm text-muted-foreground">
-                          {investment.campaigns?.city}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold">
-                        {formatINR(investment.amount)}
-                      </p>
-                      <Badge
-                        variant={
-                          investment.status === 'completed'
-                            ? 'default'
-                            : 'secondary'
-                        }
-                        className="mt-1"
-                      >
-                        {investment.status}
-                      </Badge>
-                    </div>
+              <Link href="/campaigns" className="mt-4 inline-block">
+                <Button>Browse Campaigns</Button>
+              </Link>
+            </div>
+          ) : (
+            investments.map((investment) => {
+              const campaign = investment.campaigns
+              const progress = campaign
+                ? (Number(campaign.raised) / Number(campaign.goal)) * 100
+                : 0
+              return (
+                <Link
+                  key={investment.id}
+                  href={`/campaigns/${investment.campaign_id}`}
+                  className="group block rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-amber-300 hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between">
+                    <Badge className="bg-amber-100 text-amber-800">
+                      {campaign?.category}
+                    </Badge>
+                    <Badge
+                      variant={
+                        investment.status === 'completed'
+                          ? 'default'
+                          : 'secondary'
+                      }
+                    >
+                      {investment.status}
+                    </Badge>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>
-                      Campaign progress:{' '}
-                      {investment.campaigns
-                        ? `${((investment.campaigns.raised / investment.campaigns.goal) * 100).toFixed(1)}%`
-                        : 'N/A'}
-                    </span>
-                    <span>
-                      Invested on:{' '}
-                      {new Date(investment.created_at).toLocaleDateString()}
-                    </span>
+                  <h3 className="mt-3 text-lg font-semibold text-slate-900 group-hover:text-amber-700">
+                    {campaign?.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-600">
+                    {campaign?.tagline}
+                  </p>
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium text-slate-900">
+                        {formatINRFull(Number(investment.amount))}
+                      </span>
+                      <span className="text-slate-500">
+                        {campaign ? formatINRFull(Number(campaign.goal)) : '-'}
+                      </span>
+                    </div>
+                    {campaign && (
+                      <>
+                        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className="h-full bg-amber-600 transition-all"
+                            style={{ width: `${Math.min(progress, 100)}%` }}
+                          />
+                        </div>
+                        <div className="mt-2 text-xs text-slate-500">
+                          {progress.toFixed(0)}% funded
+                        </div>
+                      </>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+                  <div className="mt-4 border-t border-slate-100 pt-4 text-xs text-slate-500">
+                    Invested on{' '}
+                    {new Date(investment.created_at).toLocaleDateString()}
+                  </div>
+                </Link>
+              )
+            })
+          )}
+        </div>
+      </main>
     </div>
   )
 }
