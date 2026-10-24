@@ -4,6 +4,11 @@ import { useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+/**
+ * Custom hook for notifications management
+ * Provides real-time notifications with Supabase Realtime subscription
+ * @returns Object containing notifications, unread count, and mark functions
+ */
 export function useNotifications() {
   const qc = useQueryClient()
   const userId = useCurrentUserId()
@@ -70,6 +75,10 @@ export function useNotifications() {
   return { notifications, unread, markRead, markAllRead, isLoading }
 }
 
+/**
+ * Helper hook to get current user ID
+ * @returns Current user ID or null
+ */
 function useCurrentUserId(): string | null {
   const { data } = useQuery({
     queryKey: ['user'],
