@@ -1,25 +1,88 @@
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { CampaignCard } from '@/components/CampaignCard'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
-export const instant = false
 
-export default async function CampaignsPage() {
+interface PageProps {
+  searchParams?: Promise<{ category?: string }>
+}
+
+export default async function CampaignsPage(props: PageProps) {
+  const searchParams = await props.searchParams
+  const selectedCategory = searchParams?.category || 'All'
+
   const supabase = await createSupabaseServerClient()
 
-  const { data: campaigns } = await supabase
+  let query = supabase
     .from('campaigns')
     .select('*')
     .eq('status', 'published')
     .order('created_at', { ascending: false })
 
+  if (selectedCategory && selectedCategory !== 'All') {
+    query = query.eq('category', selectedCategory)
+  }
+
+  const { data: campaigns } = await query
+
+  // Also get investment counts
+  const { data: allInvestments } = await supabase
+    .from('investments')
+    .select('campaign_id')
+
+  const countsByCampaign: Record<string, number> = {}
+  if (allInvestments) {
+    for (const inv of allInvestments) {
+      countsByCampaign[inv.campaign_id] = (countsByCampaign[inv.campaign_id] || 0) + 1
+    }
+  }
+
+  const categories = ['All', 'Cafe', 'Bakery', 'Salon', 'Restaurant']
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Browse campaigns</h1>
-          <p className="text-muted-foreground">
-            Invest in local businesses you love
-          </p>
+    <div className="min-h-screen bg-slate-50 py-10">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900 mb-3">
+              <span>☕</span> Community-backed local businesses
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+              Explore Active Campaigns
+            </h1>
+            <p className="mt-2 text-slate-600 max-w-xl">
+              Back Pune's finest independent cafes, bakeries, and neighbourhood stores with revenue-share investments.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link href="/create-campaign">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white font-medium shadow-xs">
+                + Launch a Campaign
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat
+            return (
+              <Link
+                key={cat}
+                href={cat === 'All' ? '/campaigns' : `/campaigns?category=${encodeURIComponent(cat)}`}
+                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                {cat}
+              </Link>
+            )
+          })}
         </div>
 
         {campaigns && campaigns.length > 0 ? (
@@ -32,15 +95,27 @@ export default async function CampaignsPage() {
                 tagline={campaign.tagline}
                 category={campaign.category}
                 city={campaign.city}
-                goal={campaign.goal}
-                raised={campaign.raised}
-                minTicket={campaign.min_ticket}
+                goal={Number(campaign.goal)}
+                raised={Number(campaign.raised)}
+                minTicket={Number(campaign.min_ticket)}
+                investorCount={countsByCampaign[campaign.id] || 0}
               />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No campaigns available yet.</p>
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-16 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-2xl">
+              🔍
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-slate-900">No campaigns found</h3>
+            <p className="mt-1 text-sm text-slate-500">
+              There are currently no active campaigns in the "{selectedCategory}" category.
+            </p>
+            <div className="mt-6">
+              <Link href="/campaigns">
+                <Button variant="outline">View All Campaigns</Button>
+              </Link>
+            </div>
           </div>
         )}
       </div>
