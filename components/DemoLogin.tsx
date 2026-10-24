@@ -13,18 +13,28 @@ export function DemoLogin() {
     { email: 'demo.investor@cafestake.io', password: 'Demo1234!', role: 'investor' },
   ]
 
-  const handleDemo = async (email: string, password: string) => {
+  const handleDemo = async (email: string, password: string, role: string) => {
     setLoading(email)
     setError(null)
     try {
-      const { error: err1 } = await supabase.auth.signUp({ email, password })
-      if (err1) {
-        const { error: err2 } = await supabase.auth.signInWithPassword({ email, password })
-        if (err2) throw err2
-      } else {
-        await supabase.auth.signInWithPassword({ email, password })
+      // Call server API to ensure demo user exists
+      const res = await fetch('/api/demo-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Demo login failed')
       }
-      window.location.href = email.includes('owner') ? '/dashboard' : '/portfolio'
+
+      // Sign in with the credentials
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) throw error
+
+      window.location.href = role === 'owner' ? '/dashboard' : '/portfolio'
     } catch (e: any) {
       setError(e.message || 'Demo login failed')
     } finally {
@@ -40,7 +50,7 @@ export function DemoLogin() {
           size="sm"
           variant="outline"
           disabled={loading === a.email}
-          onClick={() => handleDemo(a.email, a.password)}
+          onClick={() => handleDemo(a.email, a.password, a.role)}
         >
           {loading === a.email ? '…' : a.role === 'owner' ? 'Demo owner' : 'Demo investor'}
         </Button>
