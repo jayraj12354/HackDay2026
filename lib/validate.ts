@@ -1,5 +1,9 @@
 import { z } from 'zod'
 
+/**
+ * Campaign schema for validation
+ * Validates campaign data structure and constraints
+ */
 export const CampaignSchema = z.object({
   title: z.string().min(2).max(120),
   tagline: z.string().min(5).max(200),
@@ -29,6 +33,10 @@ export const CampaignSchema = z.object({
   riskSummary: z.array(z.string()).min(3).max(8),
 })
 
+/**
+ * Compliance check schema for AI validation
+ * Validates compliance check response structure
+ */
 export const ComplianceCheckSchema = z.object({
   passed: z.boolean(),
   flags: z.array(
@@ -42,6 +50,10 @@ export const ComplianceCheckSchema = z.object({
   investorRiskSummary: z.array(z.string()).min(3).max(8),
 })
 
+/**
+ * Generate campaign schema for AI response validation
+ * Validates AI-generated campaign data structure
+ */
 export const GenerateCampaignSchema = z.object({
   title: z.string(),
   tagline: z.string(),
@@ -67,10 +79,16 @@ export const GenerateCampaignSchema = z.object({
   offerDocument: z.string(),
 })
 
+/**
+ * Investor Q&A schema for AI response validation
+ * Validates AI-generated Q&A response structure
+ */
 export const InvestorQASchema = z.object({
   answer: z.string(),
 })
 
+// Type exports
 export type Campaign = z.infer<typeof CampaignSchema>
 export type ComplianceCheck = z.infer<typeof ComplianceCheckSchema>
 export type GenerateCampaign = z.infer<typeof GenerateCampaignSchema>
+export type InvestorQA = z.infer<typeof InvestorQASchema>
