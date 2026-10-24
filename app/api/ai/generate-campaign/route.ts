@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callAnthropic } from '@/lib/ai'
+import { callGemma, extractJson } from '@/lib/ai'
 import { SYSTEM_PROMPTS } from '@/lib/prompts'
 import { GenerateCampaignSchema } from '@/lib/validate'
 
@@ -25,25 +25,25 @@ Min ticket size: ₹${ticketSize}
 Proposed terms: ${revenueSharePercent}% monthly revenue share for ${tenureMonths} months
 Purpose of funds: ${purpose}`
 
-    // Attempt Anthropic Claude Sonnet
-    const claudeResult = await callAnthropic({
+    // Attempt Google Gemma 4 (31B) via OpenRouter
+    const gemmaResult = await callGemma({
       system: SYSTEM_PROMPTS.generateCampaign,
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 2500,
+      max_tokens: 3000,
+      enableReasoning: true,
     })
 
-    if (claudeResult) {
+    if (gemmaResult) {
       try {
-        const cleaned = claudeResult.replace(/```json/g, '').replace(/```/g, '').trim()
-        const parsed = JSON.parse(cleaned)
+        const parsed = extractJson(gemmaResult)
         const validated = GenerateCampaignSchema.parse(parsed)
         return NextResponse.json({ success: true, campaign: validated })
       } catch (parseErr) {
-        console.warn('Failed to parse Claude output, using intelligent generator:', parseErr)
+        console.warn('Failed to parse Gemma output, using intelligent generator:', parseErr)
       }
     }
 
-    // High quality intelligent generator fallback
+    // High quality intelligent generator fallback if API key is not yet set or returns error
     const totalGoal = Number(amountNeeded) || 2500000
     const leaseAmt = Math.round(totalGoal * 0.4)
     const equipAmt = Math.round(totalGoal * 0.35)

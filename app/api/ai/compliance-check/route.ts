@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callAnthropic } from '@/lib/ai'
+import { callGemma, extractJson } from '@/lib/ai'
 import { SYSTEM_PROMPTS } from '@/lib/prompts'
 import { ComplianceCheckSchema } from '@/lib/validate'
 
@@ -14,25 +14,25 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Attempt Anthropic Claude Sonnet
-    const claudeResult = await callAnthropic({
+    // Attempt Google Gemma 4 (31B) via OpenRouter
+    const gemmaResult = await callGemma({
       system: SYSTEM_PROMPTS.complianceCheck,
       messages: [{ role: 'user', content: campaignText }],
-      max_tokens: 2000,
+      max_tokens: 2500,
+      enableReasoning: true,
     })
 
-    if (claudeResult) {
+    if (gemmaResult) {
       try {
-        const cleaned = claudeResult.replace(/```json/g, '').replace(/```/g, '').trim()
-        const parsed = JSON.parse(cleaned)
+        const parsed = extractJson(gemmaResult)
         const validated = ComplianceCheckSchema.parse(parsed)
         return NextResponse.json({ success: true, compliance: validated })
       } catch (parseErr) {
-        console.warn('Failed to parse Claude output, using rule-based compliance check:', parseErr)
+        console.warn('Failed to parse Gemma output, using rule-based compliance check:', parseErr)
       }
     }
 
-    // Rule-based compliance screening
+    // Rule-based compliance screening fallback
     const flags: Array<{ phrase: string; problem: string; suggestedRewrite: string }> = []
     const lower = campaignText.toLowerCase()
 

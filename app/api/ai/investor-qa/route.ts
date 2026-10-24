@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { callAnthropic } from '@/lib/ai'
+import { callGemma } from '@/lib/ai'
 import { SYSTEM_PROMPTS } from '@/lib/prompts'
 
 export async function POST(req: NextRequest) {
@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Attempt Anthropic Claude Sonnet first
-    const claudeResponse = await callAnthropic({
+    // Attempt Google Gemma 4 (31B) via OpenRouter
+    const gemmaResponse = await callGemma({
       system: SYSTEM_PROMPTS.investorQA,
       messages: [
         {
@@ -25,11 +25,11 @@ export async function POST(req: NextRequest) {
       max_tokens: 1024,
     })
 
-    if (claudeResponse) {
-      return NextResponse.json({ response: claudeResponse })
+    if (gemmaResponse) {
+      return NextResponse.json({ response: gemmaResponse })
     }
 
-    // Smart context-aware fallback if API key is not configured:
+    // Smart context-aware fallback if API key is not configured or network offline:
     const qLower = question.toLowerCase()
     let responseText = ''
 
