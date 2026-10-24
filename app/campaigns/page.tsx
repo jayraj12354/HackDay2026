@@ -1,8 +1,10 @@
-import { createClient } from '@/lib/supabase-server'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { CampaignCard } from '@/components/CampaignCard'
 
+export const instant = false
+
 export default async function CampaignsPage() {
-  const supabase = await createClient()
+  const supabase = await createSupabaseServerClient()
 
   const { data: campaigns } = await supabase
     .from('campaigns')
