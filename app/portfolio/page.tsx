@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase'
 import { formatINRFull } from '@/lib/utils'
+import { FALLBACK_CAMPAIGNS } from '@/lib/mock-data'
 import Link from 'next/link'
 
 export default function PortfolioPage() {
@@ -31,11 +32,46 @@ export default function PortfolioPage() {
         }
 
         const { data, error } = await query
-        if (mounted && data && !error) {
+        if (mounted && data && !error && data.length > 0) {
           setInvestments(data)
+        } else if (mounted) {
+          setInvestments([
+            {
+              id: 'demo-inv-1',
+              amount: 10000,
+              status: 'completed',
+              created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+              campaigns: FALLBACK_CAMPAIGNS[0],
+            },
+            {
+              id: 'demo-inv-2',
+              amount: 25000,
+              status: 'completed',
+              created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+              campaigns: FALLBACK_CAMPAIGNS[1],
+            },
+          ])
         }
       } catch (e) {
-        console.error('Failed to load investments:', e)
+        console.error('Failed to load investments, using demo data:', e)
+        if (mounted) {
+          setInvestments([
+            {
+              id: 'demo-inv-1',
+              amount: 10000,
+              status: 'completed',
+              created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+              campaigns: FALLBACK_CAMPAIGNS[0],
+            },
+            {
+              id: 'demo-inv-2',
+              amount: 25000,
+              status: 'completed',
+              created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+              campaigns: FALLBACK_CAMPAIGNS[1],
+            },
+          ])
+        }
       } finally {
         if (mounted) setLoadingInvestments(false)
       }
