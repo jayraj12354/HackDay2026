@@ -32,7 +32,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { role } },
+          options: {
+            data: { role },
+            emailRedirectTo: `${window.location.origin}/login`,
+          },
         })
         if (error) throw error
         setSuccess(true)
@@ -50,9 +53,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
   if (success) {
     return (
       <div className="rounded-xl border border-green-200 bg-green-50 p-6 text-center">
-        <p className="font-medium text-green-800">Check your email to confirm.</p>
+        <p className="font-medium text-green-800">Account created successfully!</p>
         <p className="mt-1 text-sm text-green-700">
-          After confirming, sign in on the login page.
+          Check your email to confirm your account, then sign in.
+        </p>
+        <p className="mt-2 text-xs text-green-600">
+          For quick demo access, use the Demo Login button on the home page.
         </p>
       </div>
     )
