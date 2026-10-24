@@ -1,38 +1,54 @@
+import { Logo } from '@/components/Logo'
 import Link from 'next/link'
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-10">
-        <div className="grid gap-8 sm:grid-cols-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                <span className="text-sm font-bold">C</span>
-              </div>
-              <span className="text-lg font-bold text-slate-900">
-                Grow<span className="text-emerald-600">Fund</span>
-              </span>
-            </div>
-            <p className="mt-3 text-sm text-slate-500">
-              Community investing in local businesses.
+    <footer className="border-t border-border bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid gap-8 md:grid-cols-4">
+          <div className="md:col-span-2">
+            <Logo />
+            <p className="mt-3 max-w-md text-sm text-muted-foreground">
+              Community-driven funding for local businesses. Empowering India's neighbourhood economy through transparent revenue-sharing.
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Product</h3>
-            <ul className="mt-3 space-y-2 text-sm text-slate-500">
-              <li><Link href="/campaigns" className="hover:text-amber-700">Campaigns</Link></li>
-              <li><Link href="/portfolio" className="hover:text-amber-700">Portfolio</Link></li>
-              <li><Link href="/dashboard" className="hover:text-amber-700">Dashboard</Link></li>
+            <h3 className="text-sm font-semibold">Product</h3>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>
+                <Link href="/campaigns" className="transition-colors hover:text-foreground">
+                  Campaigns
+                </Link>
+              </li>
+              <li>
+                <Link href="/portfolio" className="transition-colors hover:text-foreground">
+                  Portfolio
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                  Dashboard
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Demo notice</h3>
-            <p className="mt-3 text-sm text-slate-500">
-              This is a demo project. No real money, no real KYC, no real
-              payments. All investments are simulated.
-            </p>
+            <h3 className="text-sm font-semibold">Legal</h3>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>
+                <span className="cursor-not-allowed">Terms of Service</span>
+              </li>
+              <li>
+                <span className="cursor-not-allowed">Privacy Policy</span>
+              </li>
+              <li>
+                <span className="cursor-not-allowed">Risk Disclosure</span>
+              </li>
+            </ul>
           </div>
+        </div>
+        <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
+          <p>© 2026 CafeStake. Demo project. All investments are simulated.</p>
         </div>
       </div>
     </footer>
