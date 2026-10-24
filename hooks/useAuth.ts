@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
+/**
+ * Custom hook for authentication state management
+ * Provides current user, loading state, and role information
+ * @returns Object containing user data and loading state
+ */
 export function useAuth() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
