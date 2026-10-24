@@ -5,25 +5,45 @@ import { CampaignCard } from '@/components/CampaignCard'
 import { DemoLogin } from '@/components/DemoLogin'
 
 
+import { FALLBACK_CAMPAIGNS } from '@/lib/mock-data'
+
+export const instant = false
+
 export default async function HomePage() {
-  const supabase = await createSupabaseServerClient()
-  const { data: campaigns } = await supabase
-    .from('campaigns')
-    .select('*')
-    .eq('status', 'published')
-    .order('created_at', { ascending: false })
-    .limit(3)
-
-  // Get investment counts
-  const { data: allInvestments } = await supabase
-    .from('investments')
-    .select('campaign_id')
-
+  let campaigns: any[] = []
   const countsByCampaign: Record<string, number> = {}
-  if (allInvestments) {
-    for (const inv of allInvestments) {
-      countsByCampaign[inv.campaign_id] = (countsByCampaign[inv.campaign_id] || 0) + 1
+
+  try {
+    const supabase = await createSupabaseServerClient()
+    const { data } = await supabase
+      .from('campaigns')
+      .select('*')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .limit(3)
+
+    if (data && data.length > 0) {
+      campaigns = data
     }
+
+    const { data: allInvestments } = await supabase
+      .from('investments')
+      .select('campaign_id')
+
+    if (allInvestments) {
+      for (const inv of allInvestments) {
+        countsByCampaign[inv.campaign_id] = (countsByCampaign[inv.campaign_id] || 0) + 1
+      }
+    }
+  } catch (err) {
+    console.warn('Could not query Supabase campaigns, using demo seed data:', err)
+  }
+
+  if (campaigns.length === 0) {
+    campaigns = FALLBACK_CAMPAIGNS
+    countsByCampaign['demo-brew-and-co'] = 24
+    countsByCampaign['demo-the-pune-baker'] = 18
+    countsByCampaign['demo-glow-studio-salon'] = 31
   }
 
   return (

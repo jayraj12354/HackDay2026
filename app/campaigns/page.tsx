@@ -4,6 +4,10 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 
+import { FALLBACK_CAMPAIGNS } from '@/lib/mock-data'
+
+export const instant = false
+
 interface PageProps {
   searchParams?: Promise<{ category?: string }>
 }
@@ -12,30 +16,49 @@ export default async function CampaignsPage(props: PageProps) {
   const searchParams = await props.searchParams
   const selectedCategory = searchParams?.category || 'All'
 
-  const supabase = await createSupabaseServerClient()
+  let campaigns: any[] = []
+  const countsByCampaign: Record<string, number> = {}
 
-  let query = supabase
-    .from('campaigns')
-    .select('*')
-    .eq('status', 'published')
-    .order('created_at', { ascending: false })
+  try {
+    const supabase = await createSupabaseServerClient()
 
-  if (selectedCategory && selectedCategory !== 'All') {
-    query = query.eq('category', selectedCategory)
+    let query = supabase
+      .from('campaigns')
+      .select('*')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+
+    if (selectedCategory && selectedCategory !== 'All') {
+      query = query.eq('category', selectedCategory)
+    }
+
+    const { data } = await query
+    if (data && data.length > 0) {
+      campaigns = data
+    }
+
+    // Also get investment counts
+    const { data: allInvestments } = await supabase
+      .from('investments')
+      .select('campaign_id')
+
+    if (allInvestments) {
+      for (const inv of allInvestments) {
+        countsByCampaign[inv.campaign_id] = (countsByCampaign[inv.campaign_id] || 0) + 1
+      }
+    }
+  } catch (err) {
+    console.warn('Could not query Supabase campaigns for feed:', err)
   }
 
-  const { data: campaigns } = await query
-
-  // Also get investment counts
-  const { data: allInvestments } = await supabase
-    .from('investments')
-    .select('campaign_id')
-
-  const countsByCampaign: Record<string, number> = {}
-  if (allInvestments) {
-    for (const inv of allInvestments) {
-      countsByCampaign[inv.campaign_id] = (countsByCampaign[inv.campaign_id] || 0) + 1
-    }
+  if (campaigns.length === 0) {
+    campaigns =
+      selectedCategory && selectedCategory !== 'All'
+        ? FALLBACK_CAMPAIGNS.filter((c) => c.category.toLowerCase() === selectedCategory.toLowerCase())
+        : FALLBACK_CAMPAIGNS
+    countsByCampaign['demo-brew-and-co'] = 24
+    countsByCampaign['demo-the-pune-baker'] = 18
+    countsByCampaign['demo-glow-studio-salon'] = 31
   }
 
   const categories = ['All', 'Cafe', 'Bakery', 'Salon', 'Restaurant']
