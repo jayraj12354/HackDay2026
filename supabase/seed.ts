@@ -10,12 +10,34 @@ config({ path: path.join(__dirname, '../.env.local') })
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
+console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Missing')
+console.log('Service Role Key:', supabaseServiceKey ? 'Set (length: ' + supabaseServiceKey.length + ')' : 'Missing')
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing required environment variables')
+  process.exit(1)
+}
+
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { persistSession: false },
 })
 
 async function seed() {
   console.log('🌱 Seeding CafeStake database...')
+
+  // Test connectivity
+  try {
+    console.log('Testing Supabase connection...')
+    const { data, error } = await supabase.from('campaigns').select('count')
+    if (error) {
+      console.error('Connection test failed:', error)
+      return
+    }
+    console.log('✓ Connection successful')
+  } catch (e) {
+    console.error('Connection test threw error:', e)
+    return
+  }
 
   // Get or create demo users
   let ownerId: string | undefined
