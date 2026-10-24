@@ -25,8 +25,14 @@ export function Header() {
   ]
 
   const handleSignOut = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+    } catch {}
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('cafestake_demo_user')
+      document.cookie = 'cafestake_demo_user=; path=/; max-age=0'
+    }
     window.location.href = '/'
   }
 

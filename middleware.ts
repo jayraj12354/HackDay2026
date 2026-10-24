@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { supabaseUrl, supabaseAnonKey, isSupabaseConfigured } from '@/lib/supabase'
 
 const PROTECTED_PREFIXES = ['/dashboard', '/portfolio', '/create-campaign']
 
@@ -11,10 +12,13 @@ export async function middleware(req: NextRequest) {
     },
   })
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  // If Supabase is not yet configured, allow traffic to pass through gracefully
+  if (!isSupabaseConfigured) {
+    return res
+  }
+
+  try {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         get(name: string) {
           return req.cookies.get(name)?.value
@@ -38,20 +42,22 @@ export async function middleware(req: NextRequest) {
           res.cookies.set({ name, value: '', ...options })
         },
       },
+    })
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const { pathname } = req.nextUrl
+    const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p))
+
+    if (isProtected && !user) {
+      const loginUrl = new URL('/login', req.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
     }
-  )
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const { pathname } = req.nextUrl
-  const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p))
-
-  if (isProtected && !user) {
-    const loginUrl = new URL('/login', req.url)
-    loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
+  } catch (err) {
+    console.warn('Middleware auth error:', err)
   }
 
   return res

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase'
 
 export interface AuthUser {
   id: string
@@ -11,7 +11,7 @@ export interface AuthUser {
 
 /**
  * Custom hook for authentication state management
- * Provides current user, loading state, and role information
+ * Seamlessly integrates Supabase Auth and Instant Demo Switching
  */
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null)
@@ -19,50 +19,72 @@ export function useAuth() {
 
   useEffect(() => {
     let mounted = true
-    const supabase = createClient()
+
+    const checkDemoUser = (): AuthUser | null => {
+      if (typeof window === 'undefined') return null
+      try {
+        const saved = localStorage.getItem('cafestake_demo_user')
+        if (saved) return JSON.parse(saved)
+      } catch {}
+      return null
+    }
 
     const load = async () => {
-      try {
-        const { data, error } = await supabase.auth.getUser()
-        if (mounted) {
-          if (data?.user && !error) {
+      // 1. Try Supabase Auth if configured
+      if (isSupabaseConfigured) {
+        try {
+          const supabase = createClient()
+          const { data, error } = await supabase.auth.getUser()
+          if (mounted && data?.user && !error) {
             setUser({
               id: data.user.id,
               email: data.user.email || '',
               role: (data.user.user_metadata?.role as 'owner' | 'investor') || 'investor',
             })
-          } else {
-            setUser(null)
+            setLoading(false)
+            return
           }
-          setLoading(false)
-        }
-      } catch (err) {
-        if (mounted) {
-          setUser(null)
-          setLoading(false)
+        } catch (err) {
+          console.warn('Supabase auth check failed:', err)
         }
       }
-    }
-    load()
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      // 2. Fallback to Demo Local Session
+      const demoUser = checkDemoUser()
       if (mounted) {
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            role: (session.user.user_metadata?.role as 'owner' | 'investor') || 'investor',
-          })
-        } else {
-          setUser(null)
-        }
+        setUser(demoUser)
         setLoading(false)
       }
-    })
+    }
+
+    load()
+
+    // Subscribe to Supabase auth events if configured
+    let subscription: any = null
+    if (isSupabaseConfigured) {
+      try {
+        const supabase = createClient()
+        const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (mounted) {
+            if (session?.user) {
+              setUser({
+                id: session.user.id,
+                email: session.user.email || '',
+                role: (session.user.user_metadata?.role as 'owner' | 'investor') || 'investor',
+              })
+            } else {
+              setUser(checkDemoUser())
+            }
+            setLoading(false)
+          }
+        })
+        subscription = sub?.subscription
+      } catch {}
+    }
 
     return () => {
       mounted = false
-      sub?.subscription?.unsubscribe()
+      subscription?.unsubscribe()
     }
   }, [])
 
