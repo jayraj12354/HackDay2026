@@ -6,7 +6,7 @@ export default function LoginPage() {
     <div className="mx-auto max-w-md px-4 py-16">
       <h1 className="text-3xl font-bold text-slate-900">Sign in</h1>
       <p className="mt-2 text-slate-600">
-        Welcome back to CafeStake. Demo accounts are pre-created for you.
+        Welcome back to GrowFund. Demo accounts are pre-created for you.
       </p>
       <div className="mt-8">
         <AuthForm mode="login" />

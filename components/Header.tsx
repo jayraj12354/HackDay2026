@@ -41,11 +41,11 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white shadow-sm transition group-hover:scale-105">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-sm transition group-hover:scale-105">
               <span className="text-lg font-black tracking-tight">☕</span>
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900">
-              Cafe<span className="text-amber-600">Stake</span>
+              Grow<span className="text-emerald-600">Fund</span>
             </span>
           </Link>
 
@@ -58,7 +58,7 @@ export function Header() {
                   href={item.href}
                   className={`text-sm font-medium transition-colors ${
                     isActive
-                      ? 'text-amber-600 font-semibold'
+                      ? 'text-emerald-600 font-semibold'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >

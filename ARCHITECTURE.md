@@ -1,4 +1,4 @@
-# CafeStake — Component Architecture
+# GrowFund — Component Architecture
 
 ## Layer 0: shadcn primitives
 `Button`, `Card`, `Badge`, `Toast`, `Input`, `Label`, `Progress`, `Separator`, `Skeleton`, `Select`, `Alert`, `Dialog`, `Alert-Dialog`, `Textarea`
@@ -94,7 +94,7 @@
 | 42 | `supabase/seed.ts` | 3 Pune businesses + demo accounts |
 ---
 
-# Project: CafeStake — community investing in local businesses (hackathon MVP)
+# Project: GrowFund — community investing in local businesses (hackathon MVP)
 
 I'm building this in under 10 hours for a hackathon. Please build a working, demo-ready React website. Speed and a smooth demo matter more than completeness. Start by writing a short plan (files, data model, build order), then build in stages and commit after each stage so there is always a working version.
 

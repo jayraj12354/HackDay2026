@@ -8,7 +8,7 @@ import { QueryProvider } from '@/components/QueryProvider'
 import { Suspense } from 'react'
 
 export const metadata: Metadata = {
-  title: 'CafeStake — Invest in the places you love',
+  title: 'GrowFund — Invest in the places you love',
   description:
     'Local businesses raise growth funding from their own loyal customers. Invest in the cafes, bakeries and salons you love.',
 }

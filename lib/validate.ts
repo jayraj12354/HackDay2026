@@ -61,13 +61,13 @@ export const GenerateCampaignSchema = z.object({
   useOfFunds: z.array(
     z.object({
       item: z.string(),
-      amountInr: z.number(),
-      percent: z.number(),
+      amountInr: z.coerce.number(),
+      percent: z.coerce.number(),
     })
   ),
   terms: z.object({
-    revenueSharePercent: z.number(),
-    tenureMonths: z.number(),
+    revenueSharePercent: z.coerce.number(),
+    tenureMonths: z.coerce.number(),
     payoutFrequency: z.string(),
   }),
   faqs: z.array(

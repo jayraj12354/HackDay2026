@@ -2,36 +2,36 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #171717;
-  --primary: #b45309;
+  --popover-foreground: #0f172a;
+  --primary: #059669;
   --primary-foreground: #ffffff;
-  --secondary: #fef3c7;
-  --secondary-foreground: #92400e;
+  --secondary: #ecfdf5;
+  --secondary-foreground: #065f46;
   --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --accent: #fef3c7;
-  --accent-foreground: #92400e;
+  --muted-foreground: #475569;
+  --accent: #ecfdf5;
+  --accent-foreground: #065f46;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #b45309;
+  --ring: #059669;
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --card: #0a0a0a;
-  --card-foreground: #ededed;
-  --popover: #0a0a0a;
-  --popover-foreground: #ededed;
-  --primary: #f59e0b;
-  --primary-foreground: #1c1917;
+  --background: #020617;
+  --foreground: #f8fafc;
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --primary: #10b981;
+  --primary-foreground: #022c22;
   --secondary: #1e293b;
   --secondary-foreground: #f1f5f9;
   --muted: #1e293b;
@@ -39,9 +39,9 @@
   --accent: #1e293b;
   --accent-foreground: #f1f5f9;
   --destructive: #ef4444;
-  --border: #1e293b;
-  --input: #1e293b;
-  --ring: #f59e0b;
+  --border: #334155;
+  --input: #334155;
+  --ring: #10b981;
 }
 
 @theme inline {
@@ -65,11 +65,11 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --radius: var(--radius);
-  --color-amber: #b45309;
-  --color-amber-50: #fffbeb;
-  --color-amber-100: #fef3c7;
-  --color-amber-600: #d97706;
-  --color-amber-700: #b45309;
+  --color-emerald: #059669;
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 

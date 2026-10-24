@@ -573,7 +573,7 @@ export default function CreateCampaignPage() {
                     Publishing to Live Supabase...
                   </span>
                 ) : (
-                  'Publish Campaign to CafeStake 🚀'
+                  'Publish Campaign to GrowFund 🚀'
                 )}
               </Button>
             </div>

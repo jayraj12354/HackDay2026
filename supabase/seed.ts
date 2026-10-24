@@ -23,7 +23,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 })
 
 async function seed() {
-  console.log('🌱 Seeding CafeStake database...')
+  console.log('🌱 Seeding GrowFund database...')
 
   // Test connectivity
   try {

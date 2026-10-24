@@ -1,4 +1,4 @@
-# CafeStake — Invest in the places you love
+# GrowFund — Invest in the places you love
 
 A community investing platform for local businesses (cafes, bakeries, salons, restaurants, gyms) to raise growth funding directly from their loyal customers.
 

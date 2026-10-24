@@ -7,11 +7,11 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-3">
           <div>
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-600 text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white">
                 <span className="text-sm font-bold">C</span>
               </div>
               <span className="text-lg font-bold text-slate-900">
-                Cafe<span className="text-amber-600">Stake</span>
+                Grow<span className="text-emerald-600">Fund</span>
               </span>
             </div>
             <p className="mt-3 text-sm text-slate-500">

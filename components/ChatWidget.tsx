@@ -48,9 +48,12 @@ export function ChatWidget({ offerDocument }: ChatWidgetProps) {
       })
 
       const data = await response.json()
+      if (!response.ok || !data.response) {
+        throw new Error(data.error || 'Sorry, I could not get an answer.')
+      }
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: data.response || 'Sorry, I could not get an answer.' },
+        { role: 'assistant', content: data.response },
       ])
     } catch (error) {
       console.error('Chat error:', error)

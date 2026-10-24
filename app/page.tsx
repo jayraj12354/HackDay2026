@@ -47,9 +47,9 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 selection:bg-amber-100 selection:text-amber-900">
+    <div className="min-h-screen bg-slate-50 selection:bg-emerald-100 selection:text-emerald-900">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-amber-50/80 via-orange-50/40 to-slate-50 border-b border-amber-100/60 pt-16 pb-20 sm:pt-24 sm:pb-28">
+      <section className="relative overflow-hidden bg-gradient-to-b from-emerald-50/80 via-teal-50/40 to-slate-50 border-b border-emerald-100/60 pt-16 pb-20 sm:pt-24 sm:pb-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-white/80 px-4 py-1.5 text-xs font-semibold text-amber-900 shadow-xs backdrop-blur-xs">
@@ -59,7 +59,7 @@ export default async function HomePage() {
 
             <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.12]">
               Invest in the places <br className="hidden sm:inline" />
-              <span className="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent">
                 you truly love.
               </span>
             </h1>
@@ -82,7 +82,7 @@ export default async function HomePage() {
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link href="/campaigns">
-                <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white font-semibold text-base px-7 h-12 shadow-sm">
+                <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base px-7 h-12 shadow-sm">
                   Browse Active Campaigns →
                 </Button>
               </Link>
@@ -100,7 +100,7 @@ export default async function HomePage() {
                 <p className="mt-1 text-xs text-slate-500 font-medium">Community Capital Targeted</p>
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-amber-600">3 Brands</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-emerald-600">3 Brands</p>
                 <p className="mt-1 text-xs text-slate-500 font-medium">Live Pune Businesses</p>
               </div>
               <div>
@@ -119,7 +119,7 @@ export default async function HomePage() {
             Simplicity & Transparency
           </span>
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            How CafeStake Works
+            How GrowFund Works
           </h2>
           <p className="mt-3 text-slate-600 text-base">
             Moving away from loan sharks and rigid bank EMIs to aligned community revenue sharing.
@@ -153,7 +153,7 @@ export default async function HomePage() {
             >
               <div className="flex items-center justify-between">
                 <span className="text-3xl">{item.icon}</span>
-                <span className="font-mono text-xs font-bold text-slate-400 group-hover:text-amber-600 transition-colors">
+                <span className="font-mono text-xs font-bold text-slate-400 group-hover:text-emerald-600 transition-colors">
                   STEP {item.step}
                 </span>
               </div>
@@ -215,7 +215,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Comparison: Bank vs CafeStake */}
+      {/* Comparison: Bank vs GrowFund */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="rounded-3xl bg-slate-900 text-white p-8 sm:p-14 overflow-hidden relative shadow-lg">
           <div className="max-w-2xl">
@@ -223,10 +223,10 @@ export default async function HomePage() {
               A Superior Financial Model
             </span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">
-              Why CafeStake beats traditional bank debt
+              Why GrowFund beats traditional bank debt
             </h2>
             <p className="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
-              Banks require personal guarantees, mortgage collateral, and fixed monthly compound interest that crushes cash flow during rainy months. CafeStake aligns payments with actual business health.
+              Banks require personal guarantees, mortgage collateral, and fixed monthly compound interest that crushes cash flow during rainy months. GrowFund aligns payments with actual business health.
             </p>
           </div>
 
@@ -242,7 +242,7 @@ export default async function HomePage() {
             </div>
 
             <div className="rounded-2xl border border-amber-500/40 bg-amber-950/20 p-6">
-              <span className="text-amber-400 font-bold text-sm">✓ CafeStake Revenue Share</span>
+              <span className="text-amber-400 font-bold text-sm">✓ GrowFund Revenue Share</span>
               <ul className="mt-4 space-y-2.5 text-xs text-slate-200">
                 <li>• Payouts fluctuate proportionally with monthly sales</li>
                 <li>• Turn 500 loyal regulars into vocal brand promoters</li>
