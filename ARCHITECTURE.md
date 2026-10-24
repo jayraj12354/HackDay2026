@@ -106,7 +106,7 @@ IMPORTANT: this is a demo. Show a visible footer/banner on every page: "Demo pro
 ## Tech stack
 - Next.js (App Router) + TypeScript + Tailwind CSS + shadcn/ui
 - Supabase for Postgres, Auth and Realtime (if Supabase isn't set up yet, tell me exactly what to create and which env vars to fill in)
-- Anthropic API (model: claude-sonnet-5-5) called ONLY from server routes, never from the browser. Key in ANTHROPIC_API_KEY.
+- Google Gemma 4 (model: google/gemma-4-31b-it:free via OpenRouter API) called ONLY from server routes, never from the browser. Key in OPENROUTER_API_KEY.
 - Deploy target: Vercel. Mobile-first responsive design that also looks good on a projector.
 
 ## Users and roles
@@ -131,7 +131,7 @@ Output (strict JSON, validated with zod): title, tagline, story, useOfFunds (arr
 Rules: never promise or imply guaranteed returns, use language like "targeted" and "subject to business performance", write in simple English a first-time investor understands. The owner can edit every field before moving on. Show a nice loading state.
 
 ### AI 2: Investor Q&A assistant (route: POST /api/ai/investor-qa)
-A chat widget on each campaign detail page. Send the campaign's offerDocument plus the user's question to Claude.
+A chat widget on each campaign detail page. Send the campaign's offerDocument plus the user's question to Gemma.
 Rules in the system prompt: answer ONLY from the offer document. If the answer is not in the document, say "That isn't covered in this offer. Please ask the business owner." Never give personal investment advice such as "you should invest". Keep answers short and in simple language. Reply in the same language the user writes in (Hindi, Marathi, English and so on). Stream the response if easy, otherwise show a typing indicator. Suggested starter questions as clickable chips: "What happens if the cafe closes?", "When do I get my returns?", "Can I withdraw early?".
 
 ### AI 3: Compliance and risk check (route: POST /api/ai/compliance-check)

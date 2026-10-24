@@ -81,25 +81,14 @@ The app uses AI for three features:
 2. **Investor Q&A**: Chat widget on campaign pages answers questions from the offer document
 3. **Compliance Check**: Screens campaigns for risky language before publishing
 
-### Free AI API Options
+### AI Engine: Google Gemma 4 (via OpenRouter)
 
-If you don't have an Anthropic API key, you can use these free alternatives:
+All 3 AI features are powered by **Google Gemma 4 31B** (`google/gemma-4-31b-it:free`):
+1. Sign up / grab an API key from [openrouter.ai](https://openrouter.ai/keys)
+2. Add `OPENROUTER_API_KEY=your_key_here` in `.env.local`
+3. Default model is `google/gemma-4-31b-it:free` (configurable via `GEMMA_MODEL` in `.env.local`)
 
-**Groq (Recommended)** - Fast, free tier with multiple models:
-- Sign up at [groq.com](https://groq.com)
-- Get API key from dashboard
-- Set `GROQ_API_KEY` in `.env.local`
-- Update `lib/prompts.ts` to use Groq instead of Anthropic
-
-**OpenRouter** - Aggregates many free models:
-- Sign up at [openrouter.ai](https://openrouter.ai)
-- Get API key from dashboard
-- Set `OPENROUTER_API_KEY` in `.env.local`
-
-**Hugging Face Inference API** - Free tier for open-source models:
-- Sign up at [huggingface.co](https://huggingface.co)
-- Get API key from settings
-- Set `HUGGINGFACE_API_KEY` in `.env.local`
+*Note: If no API key is set in `.env.local`, intelligent local fallback generators simulate all three features so the app remains demo-ready without crashing.*
 
 ## Project Structure
 
