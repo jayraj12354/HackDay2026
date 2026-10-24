@@ -10,6 +10,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
+import { FALLBACK_CAMPAIGNS } from '@/lib/mock-data'
+
 function CampaignDetailContent() {
   const params = useParams()
   const router = useRouter()
@@ -30,7 +32,25 @@ function CampaignDetailContent() {
           .single()
 
         if (error || !data) {
-          console.error('Campaign fetch error:', error)
+          // 1. Check local demo campaigns created by user
+          if (typeof window !== 'undefined') {
+            try {
+              const locals = JSON.parse(localStorage.getItem('cafestake_local_campaigns') || '[]')
+              const foundLocal = locals.find((c: any) => c.id === params.id)
+              if (foundLocal) {
+                setCampaign({ ...foundLocal, investorCount: 0 })
+                return
+              }
+            } catch {}
+          }
+
+          // 2. Check fallback seeded campaigns
+          const fallback =
+            FALLBACK_CAMPAIGNS.find((c) => c.id === params.id) || FALLBACK_CAMPAIGNS[0]
+          if (fallback) {
+            setCampaign({ ...fallback, investorCount: 24 })
+            return
+          }
           router.push('/campaigns')
           return
         }
