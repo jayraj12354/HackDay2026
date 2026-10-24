@@ -5,6 +5,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ToastProvider } from '@/components/ui/toast'
 import { QueryProvider } from '@/components/QueryProvider'
+import { Suspense } from 'react'
 
 export const metadata: Metadata = {
   title: 'CafeStake — Invest in the places you love',
@@ -23,7 +24,9 @@ export default function RootLayout({
         <QueryProvider>
           <ToastProvider>
             <DemoBanner />
-            <Header />
+            <Suspense fallback={<div className="h-16 border-b border-slate-200" />}>
+              <Header />
+            </Suspense>
             <main className="min-h-screen">{children}</main>
             <Footer />
           </ToastProvider>
