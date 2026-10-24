@@ -8,6 +8,7 @@ import { InvestorsTable } from '@/components/InvestorsTable'
 import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase'
 import { formatINRFull } from '@/lib/utils'
+import { FALLBACK_CAMPAIGNS } from '@/lib/mock-data'
 import Link from 'next/link'
 
 export default function DashboardPage() {
@@ -35,7 +36,8 @@ export default function DashboardPage() {
         }
 
         const { data, error } = await query
-        if (mounted && data && !error) {
+        let enhanced: any[] = []
+        if (data && !error && data.length > 0) {
           // Fetch investment counts for each campaign
           const { data: invs } = await supabase.from('investments').select('campaign_id')
           const counts: Record<string, number> = {}
@@ -45,18 +47,44 @@ export default function DashboardPage() {
             }
           }
 
-          const enhanced = data.map((c) => ({
+          enhanced = data.map((c) => ({
             ...c,
             investorCount: counts[c.id] || 0,
           }))
+        } else {
+          enhanced = FALLBACK_CAMPAIGNS.map((c, i) => ({
+            ...c,
+            investorCount: [24, 18, 31][i] || 20,
+          }))
+        }
 
-          setCampaigns(enhanced)
-          if (enhanced.length > 0 && !selectedCampaignId) {
-            setSelectedCampaignId(enhanced[0].id)
+        let localList: any[] = []
+        if (typeof window !== 'undefined') {
+          try {
+            localList = JSON.parse(localStorage.getItem('cafestake_local_campaigns') || '[]')
+          } catch {}
+        }
+
+        const combined = [...localList.map((c: any) => ({ ...c, investorCount: 0 })), ...enhanced]
+
+        if (mounted) {
+          setCampaigns(combined)
+          if (combined.length > 0 && !selectedCampaignId) {
+            setSelectedCampaignId(combined[0].id)
           }
         }
       } catch (e) {
-        console.error('Error loading campaigns:', e)
+        console.error('Error loading campaigns, using demo fallback:', e)
+        if (mounted) {
+          const fallback = FALLBACK_CAMPAIGNS.map((c, i) => ({
+            ...c,
+            investorCount: [24, 18, 31][i] || 20,
+          }))
+          setCampaigns(fallback)
+          if (fallback.length > 0 && !selectedCampaignId) {
+            setSelectedCampaignId(fallback[0].id)
+          }
+        }
       } finally {
         if (mounted) setLoadingCampaigns(false)
       }
