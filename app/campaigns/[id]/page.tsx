@@ -118,3 +118,19 @@ export default function CampaignDetailPage() {
     </div>
   )
 }
+
+export default function CampaignDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-8">
+            <Skeleton className="h-8 w-64" />
+          </div>
+        </div>
+      }
+    >
+      <CampaignDetailContent />
+    </Suspense>
+  )
+}
