@@ -8,6 +8,7 @@ import { UseOfFunds } from '@/components/UseOfFunds'
 import { TermsCard } from '@/components/TermsCard'
 import { RiskSummaryBox } from '@/components/RiskSummaryBox'
 import { FAQSection } from '@/components/FAQSection'
+import { ChatWidget } from '@/components/ChatWidget'
 import { formatINR } from '@/lib/utils'
 
 interface CampaignDetailProps {
@@ -37,6 +38,7 @@ interface CampaignDetailProps {
       a: string
     }>
     riskSummary: string[]
+    offerDocument?: string
   }
   onInvest: () => void
 }
@@ -101,6 +103,9 @@ export function CampaignDetail({ campaign, onInvest }: CampaignDetailProps) {
       <TermsCard terms={campaign.terms} />
       <RiskSummaryBox riskSummary={campaign.riskSummary} />
       <FAQSection faqs={campaign.faqs} />
+      {campaign.offerDocument && (
+        <ChatWidget offerDocument={campaign.offerDocument} />
+      )}
     </div>
   )
 }
